@@ -12,6 +12,11 @@
     <!-- List of modules -->
     <modules>
         <!-- Add here the paths of all modules (e.g. <module>modules/MyModule</module>) -->
+        <module>modules/MattFilter</module>
+        <module>modules/NetlistImporter</module>
+        <module>modules/CyclesDetection</module>
+        <module>modules/ClockTree</module>
+        <module>modules/ToolPluginExample</module>
     </modules>
     
     <!-- Properties -->
