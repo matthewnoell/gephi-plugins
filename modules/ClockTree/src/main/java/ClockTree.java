@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,13 +57,13 @@ public class ClockTree implements Tool, LongTask {
     
     private List<Node> neigh;
     
+    private Iterator<Node> edgeIterator;
+    
     private static final Logger logger = Logger.getLogger("com.raytheon.plugins.clocktree");
     
     public ClockTree() {
         //Default settings
         color = Color.RED;
-        
-        logger.log(Level.INFO, "Hello world 0");
     }
     
     @Override
@@ -90,17 +91,15 @@ public class ClockTree implements Tool, LongTask {
                 
                 col = null;
                 for (int i=0; i<nodeTable.countColumns(); i++) {
-                    logger.log(Level.INFO, "  col Index {0}", nodeTable.getColumn(i).getIndex());
-                    logger.log(Level.INFO, "  col Id {0}", nodeTable.getColumn(i).getId());
-                    logger.log(Level.INFO, "  col Title {0}", nodeTable.getColumn(i).getTitle());
                     if (nodeTable.getColumn(i).getTitle().equals("is_sequential")) {
-                        logger.log(Level.INFO, "  FOUND!");
                         col = nodeTable.getColumn(i);
                         break;
                     }
                 }
                 if (col == null) {
                     logger.log(Level.INFO, "Column 'is_sequential' not found!");
+                } else {
+                    logger.log(Level.INFO, "Column 'is_sequential' found!");
                 }
                 
                 if (gm.isDirected()) {
@@ -110,13 +109,89 @@ public class ClockTree implements Tool, LongTask {
                     onStack = new ArrayList<Node>(graph.getNodeCount());
                     edgeTo = new HashMap<Node, Node>(graph.getNodeCount());
                     
-                    dfs(graph, nodeTable, sourceNode);
+                    graph.readLock();
                     
-                    for (int i = 0; i < marked.size(); i++) {
-                        Node v = marked.get(i);
-                        logger.log(Level.INFO, "Calling setColor() for Node {0}", v.getId().toString());
-                        v.setColor(color);
-                    }                        
+                    try {
+                        // Init the progress tick to the number of nodes to be visited
+                        Progress.start(progressTicket, graph.getNodeCount());
+                        Progress.setDisplayName(progressTicket, "Visiting nodes...");
+            
+                        dfs(graph, nodeTable, sourceNode);
+                        
+                        graph.readUnlockAll();
+                    
+                        for (Node v : graph.getNodes()) {
+                            v.setColor(Color.BLACK);
+                        }
+                        
+                        for (Edge e : graph.getEdges()) {
+                            e.setColor(Color.BLACK);
+                        }
+                    
+                        for (int i = 0; i < marked.size(); i++) {
+                            Node v = marked.get(i);
+                            logger.log(Level.INFO, "Calling setColor() for Node {0}", v.getId().toString());
+                            v.setColor(color);
+                        }
+                        
+                        edgeIterator = edgeTo.keySet().iterator();
+                        
+                        while(edgeIterator.hasNext()) {
+                            Node w = edgeIterator.next();
+                            Node v = edgeTo.get(w);
+                            Edge e = graph.getEdge(v, w);
+                            if (e == null) {
+                                logger.log(Level.INFO, "Edge not found!");
+                            } else {
+                                logger.log(Level.INFO, "Calling setColor() for edge from {0} to {1}", new Object[] {v.getId().toString(), w.getId().toString()});
+                                e.setColor(color);
+                            }
+                        }
+                    
+                    
+                        edgeIterator = edgeTo.keySet().iterator();
+                        
+                        int deletedEdgeCnt = 0;
+                        int deletedNodeCnt = 0;
+                        
+                        while(edgeIterator.hasNext()) {
+                            Node w = edgeIterator.next();
+                            Node v = edgeTo.get(w);
+                            Edge e = graph.getEdge(v, w);
+                            if (e == null) {
+                                logger.log(Level.INFO, "Edge not found!");
+                            }
+                            if(!graph.removeEdge(e)) {
+                                logger.log(Level.INFO, "Unable to remove edge {0}", e);
+                            } else {
+                                logger.log(Level.INFO, "Deleting edge from {0} to {1}", new Object[] {e.getSource().getId().toString(), e.getTarget().getId().toString()});
+                                deletedEdgeCnt++;
+                            }
+                        }
+                        
+                        for (int i = 0; i < marked.size(); i++) {
+                            Node v = marked.get(i);
+                            if(graph.getDegree(v) == 0) {
+                                if(!graph.removeNode(v)) {
+                                    logger.log(Level.INFO, "Unable to remove node {0}", v);
+                                }
+                                else {
+                                    logger.log(Level.INFO, "Deleting node {0}", v.getId().toString());
+                                    deletedNodeCnt++;
+                                }
+                            }
+                        }
+                        
+                        logger.log(Level.INFO, "# Edges deleted: {0}", deletedEdgeCnt);
+                        logger.log(Level.INFO, "# Nodes deleted: {0}", deletedNodeCnt);
+                        
+                        graph.readUnlockAll();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        // Unlock graph
+                        graph.readUnlockAll();
+                    }
+                    Progress.finish(progressTicket);                    
                 } else {
                     sourceNode.setColor(Color.BLUE);
                 }
@@ -191,13 +266,13 @@ public class ClockTree implements Tool, LongTask {
 
         neigh = new ArrayList<Node>();
         
-        Boolean b1 = new Boolean(true);
-        
         // Break the recursion if cancel is pressed
         if (cancel) return;
         
         for (Edge e : graph.getEdges(node)) {
+            logger.log(Level.INFO, "Found edge from {0} to {1}", new Object[] {e.getSource().getId().toString(), e.getTarget().getId().toString()});
             if (e.getSource().equals(node) && !e.getSource().equals(e.getTarget())) {
+                logger.log(Level.INFO, "Adding node {0} to neigh list", e.getTarget().getId().toString());
                 neigh.add(e.getTarget());
             }
         }
@@ -208,9 +283,10 @@ public class ClockTree implements Tool, LongTask {
             if (w.getAttribute(col).equals(Boolean.TRUE)) {
                 marked.add(w);
             }
+            
+            edgeTo.put(w, node);
         
             if (!marked.contains(w)) {
-                edgeTo.put(w, node);
                 dfs(graph, table, w);
             }
         }
