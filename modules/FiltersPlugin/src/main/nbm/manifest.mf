@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+AutoUpdate-Essential-Module: true
+OpenIDE-Module-Short-Description: Filter the node fanout logic cone
+OpenIDE-Module-Long-Description: Filter the node fanout logic cone
+OpenIDE-Module-Display-Category: Plugin
+OpenIDE-Module-Name: Filters Plugin
