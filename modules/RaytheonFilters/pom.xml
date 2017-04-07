@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util-lookup</artifactId>
-            <version>RELEASE82</version>
+            <version>RELEASE81</version>
         </dependency>
         <dependency>
             <groupId>org.gephi</groupId>
