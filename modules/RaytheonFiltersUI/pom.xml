@@ -32,9 +32,9 @@
             <version>RELEASE81</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>com.raytheon</groupId>
             <artifactId>raytheon-filters-plugin</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
