@@ -85,45 +85,35 @@ public class FanoutPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         labelNodeId = new javax.swing.JLabel();
-        labelDepth = new javax.swing.JLabel();
-        okButton = new javax.swing.JButton();
         nodeIdTextField = new javax.swing.JTextField();
+        labelDepth = new javax.swing.JLabel();
         depthComboBox = new javax.swing.JComboBox();
+        okButton = new javax.swing.JButton();
         withSelfCheckbox = new javax.swing.JCheckBox();
 
         labelNodeId.setText(org.openide.util.NbBundle.getMessage(FanoutPanel.class, "FanoutPanel.labelNodeId.text")); // NOI18N
-        labelNodeId.setLocation(new java.awt.Point(0, 0));
-        labelNodeId.setSize(new java.awt.Dimension(0, 0));
-
-        labelDepth.setText(org.openide.util.NbBundle.getMessage(FanoutPanel.class, "FanoutPanel.labelDepth.text")); // NOI18N
-        labelDepth.setLocation(new java.awt.Point(0, 0));
-        labelDepth.setSize(new java.awt.Dimension(0, 0));
-
-        okButton.setText(org.openide.util.NbBundle.getMessage(FanoutPanel.class, "FanoutPanel.okButton.text")); // NOI18N
-        okButton.setLocation(new java.awt.Point(0, 0));
-        okButton.setMargin(new java.awt.Insets(2, 7, 2, 7));
-        okButton.setSize(new java.awt.Dimension(0, 0));
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
 
         nodeIdTextField.setText(org.openide.util.NbBundle.getMessage(FanoutPanel.class, "FanoutPanel.nodeIdTextField.text")); // NOI18N
         nodeIdTextField.setToolTipText(org.openide.util.NbBundle.getMessage(FanoutPanel.class, "FanoutPanel.nodeIdTextField.toolTipText")); // NOI18N
-        nodeIdTextField.setLocation(new java.awt.Point(0, 0));
-        nodeIdTextField.setSize(new java.awt.Dimension(0, 0));
         nodeIdTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nodeIdTextFieldActionPerformed(evt);
             }
         });
 
+        labelDepth.setText(org.openide.util.NbBundle.getMessage(FanoutPanel.class, "FanoutPanel.labelDepth.text")); // NOI18N
+
         depthComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "Max" }));
 
+        okButton.setText(org.openide.util.NbBundle.getMessage(FanoutPanel.class, "FanoutPanel.okButton.text")); // NOI18N
+        okButton.setMargin(new java.awt.Insets(2, 7, 2, 7));
+        okButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okButtonActionPerformed(evt);
+            }
+        });
+
         withSelfCheckbox.setText(org.openide.util.NbBundle.getMessage(FanoutPanel.class, "FanoutPanel.withSelfCheckbox.text")); // NOI18N
-        withSelfCheckbox.setLocation(new java.awt.Point(0, 0));
-        withSelfCheckbox.setSize(new java.awt.Dimension(0, 0));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -136,14 +126,15 @@ public class FanoutPanel extends javax.swing.JPanel {
                     .addComponent(labelDepth))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nodeIdTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                    .addComponent(nodeIdTextField)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(withSelfCheckbox)
                             .addComponent(depthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 46, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(okButton))
+                .addComponent(okButton)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,7 +143,7 @@ public class FanoutPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelNodeId)
                     .addComponent(okButton)
-                    .addComponent(nodeIdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nodeIdTextField))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelDepth)
