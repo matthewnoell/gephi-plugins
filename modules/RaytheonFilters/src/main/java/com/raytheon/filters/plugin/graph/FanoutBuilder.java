@@ -18,10 +18,14 @@ import org.gephi.project.api.Workspace;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ServiceProvider(service = FilterBuilder.class)
 public class FanoutBuilder implements FilterBuilder {
 
+    private static final Logger LOG = Logger.getLogger("com.raytheon.filters.plugin.graph");
+    
     @Override
     public Category getCategory() {
         return FilterLibrary.TOPOLOGY;
@@ -49,10 +53,12 @@ public class FanoutBuilder implements FilterBuilder {
     
     @Override
     public JPanel getPanel(Filter filter) {
+        LOG.log(Level.INFO, "FanoutBuilder.getPanel() called");
         FanoutUI ui = Lookup.getDefault().lookup(FanoutUI.class);
         if (ui != null) {
             return ui.getPanel((FanoutFilter) filter);
         }
+        LOG.log(Level.INFO, "FanoutUI.getPanel() returned null!");
         return null;
     }
     
