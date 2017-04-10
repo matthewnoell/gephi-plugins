@@ -56,7 +56,6 @@
                     <sourceCodeUrl>$sourcecode_url</sourceCodeUrl>
                     <publicPackages>
                         <!-- Insert public packages -->
-                        <publicPackage>com.raytheon.filters.plugin.graph</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

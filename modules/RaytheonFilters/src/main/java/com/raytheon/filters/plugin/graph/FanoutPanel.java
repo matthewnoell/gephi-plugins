@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,9 +19,12 @@ import java.awt.event.ItemListener;
 public class FanoutPanel extends javax.swing.JPanel {
 
     private FanoutFilter fanoutFilter;
+    
+    private static final Logger LOG = Logger.getLogger("com.raytheon.filters.plugin.graph");
 
     /** Creates new form FanoutPanel */
     public FanoutPanel() {
+        LOG.log(Level.INFO, "FanoutPanel.FanoutPanel() called");
         initComponents();
 
         okButton.addActionListener(new ActionListener() {
