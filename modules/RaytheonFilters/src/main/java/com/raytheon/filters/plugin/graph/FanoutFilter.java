@@ -65,25 +65,39 @@ public class FanoutFilter implements ComplexFilter {
         Set<Node> result = new HashSet<>();
             
         Set<Node> neighbours = new HashSet<>();
+        List<Node> sequential = new ArrayList<>();
         neighbours.addAll(nodes);
-            
+        
         for (int i = 0; i < depth; i++) {
-            Node[] nei = neighbours.toArray(new Node[0]);
-            neighbours.clear();
-            for (Node n : nei) {
-                LOG.log(Level.INFO, "Start node: {0}", n.getId().toString());
-                for (Edge e : graph.getEdges(n)) {
-                    if (e.getSource().equals(n) && !e.getSource().equals(e.getTarget())) {
-                        LOG.log(Level.INFO, "Adding node {0} to neigh list", e.getTarget().getId().toString());
-                        Node neighbor = e.getTarget();
-                        if (!result.contains(neighbor) &&
-                                !neighbor.getAttribute(is_sequential).equals(Boolean.TRUE)) {
-                            neighbours.add(neighbor);
-                            result.add(neighbor);
+            for (int j = 0; j < Integer.MAX_VALUE; j++) {
+                // Add Sequential Nodes from previous loop to be filtered
+                result.addAll(sequential);
+                sequential.clear();
+                
+                Node[] nei = neighbours.toArray(new Node[0]);
+                neighbours.clear();
+                for (Node n : nei) {
+                    LOG.log(Level.INFO, "Start node: {0}", n.getId().toString());
+                    for (Edge e : graph.getEdges(n)) {
+                        if (e.getSource().equals(n) && !e.getSource().equals(e.getTarget())) {
+                            LOG.log(Level.INFO, "Adding node {0} to neigh list", e.getTarget().getId().toString());
+                            Node neighbor = e.getTarget();
+                            if (!result.contains(neighbor)) {
+                                if (neighbor.getAttribute(is_sequential).equals(Boolean.TRUE)) {
+                                    sequential.add(neighbor);
+                                } else {
+                                    neighbours.add(neighbor);
+                                    result.add(neighbor);
+                                }
+                            }
                         }
                     }
                 }
+                if (neighbours.isEmpty()) {
+                    break;
+                }
             }
+            neighbours.addAll(sequential);
             if (neighbours.isEmpty()) {
                 break;
             }
