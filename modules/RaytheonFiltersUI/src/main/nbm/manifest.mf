@@ -1,5 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Essential-Module: false
 OpenIDE-Module-Localizing-Bundle: com/raytheon/ui/filters/plugin/Bundle.properties
-OpenIDE-Module-Display-Category: Plugin
+OpenIDE-Module-Short-Description: User Interface for Raytheon filters for analyzing gate-level netlists
+OpenIDE-Module-Long-Description: User Interface for Raytheon filters for analyzing gate-level netlists
+OpenIDE-Module-Display-Category: Filter
 OpenIDE-Module-Name: Raytheon Filters UI
