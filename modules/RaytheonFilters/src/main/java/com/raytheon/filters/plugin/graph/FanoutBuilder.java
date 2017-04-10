@@ -21,7 +21,8 @@ public class FanoutBuilder implements FilterBuilder {
     
     @Override
     public Category getCategory() {
-        return FilterLibrary.TOPOLOGY;
+//        return FilterLibrary.TOPOLOGY;
+        return new Category("Raytheon");
     }
     
     @Override

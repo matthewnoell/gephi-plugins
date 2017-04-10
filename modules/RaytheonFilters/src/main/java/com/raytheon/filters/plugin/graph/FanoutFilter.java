@@ -13,6 +13,7 @@ import org.gephi.filters.spi.FilterProperty;
 import org.gephi.filters.spi.ComplexFilter;
 import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.Node;
+import org.gephi.graph.api.Edge;
 import org.openide.util.NbBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,10 +52,15 @@ public class FanoutFilter implements ComplexFilter {
             Node[] nei = neighbours.toArray(new Node[0]);
             neighbours.clear();
             for (Node n : nei) {
-                for (Node neighbor : graph.getNeighbors(n)) {
-                    if (!result.contains(neighbor)) {
-                        neighbours.add(neighbor);
-                        result.add(neighbor);
+                LOG.log(Level.INFO, "Start node: {0}", n.getId().toString());
+                for (Edge e : graph.getEdges(n)) {
+                    if (e.getSource().equals(n) && !e.getSource().equals(e.getTarget())) {
+                        LOG.log(Level.INFO, "Adding node {0} to neigh list", e.getTarget().getId().toString());
+                        Node neighbor = e.getTarget();
+                        if (!result.contains(neighbor)) {
+                            neighbours.add(neighbor);
+                            result.add(neighbor);
+                        }
                     }
                 }
             }
