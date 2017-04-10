@@ -13,7 +13,7 @@ import com.raytheon.filters.plugin.graph.FanoutBuilder.FanoutFilter;
 
 /**
  *
- * @author mattn
+ * @author Matthew Noell <mnoell@raytheon.com>
  */
 public class FanoutPanel extends javax.swing.JPanel {
 
