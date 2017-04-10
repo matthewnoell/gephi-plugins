@@ -100,7 +100,9 @@ public class FanoutFilter implements ComplexFilter {
                 graph.removeNode(node);
             }
         }
-            
+        
+        LOG.log(Level.INFO, "Nodes filtered: {0}", result.size());
+        
         return graph;
     }
         
