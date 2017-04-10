@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-AutoUpdate-Essential-Module: true
-OpenIDE-Module-Short-Description: Filters for analyzing gate-level netlists
-OpenIDE-Module-Long-Description: Filters for analyzing gate-level netlists
+AutoUpdate-Essential-Module: false
+OpenIDE-Module-Short-Description: Raytheon filters for analyzing gate-level netlists
+OpenIDE-Module-Long-Description: Raytheon filters for analyzing gate-level netlists
 OpenIDE-Module-Display-Category: Filter
 OpenIDE-Module-Name: Raytheon Filters
