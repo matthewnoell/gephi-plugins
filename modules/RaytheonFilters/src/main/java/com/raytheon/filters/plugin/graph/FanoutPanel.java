@@ -28,10 +28,13 @@ public class FanoutPanel extends javax.swing.JPanel {
         initComponents();
 
         okButton.addActionListener(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
+                LOG.log(Level.INFO, "FanoutPanel.actionPerformed() called");
+                LOG.log(Level.INFO, "nodeIdTextField = {0}", nodeIdTextField.getText());
                 fanoutFilter.getProperties()[0].setValue(nodeIdTextField.getText());
+                LOG.log(Level.INFO, "FanoutPanel.actionPerformed() exiting");
             }
         });
 
@@ -64,6 +67,7 @@ public class FanoutPanel extends javax.swing.JPanel {
     }
 
     public void setup(FanoutFilter fanoutFilter) {
+        LOG.log(Level.INFO, "FanoutPanel.setup() called");
         this.fanoutFilter = fanoutFilter;
         nodeIdTextField.setText(fanoutFilter.getPattern());
 

@@ -14,12 +14,16 @@ import org.gephi.filters.spi.ComplexFilter;
 import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.Node;
 import org.openide.util.NbBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Matthew Noell <mnoell@raytheon.com>
  */
 public class FanoutFilter implements ComplexFilter {
+    
+    private static final Logger LOG = Logger.getLogger("com.raytheon.filters.plugin.graph");
   
     private String pattern = "";
     private boolean self = true;
@@ -81,6 +85,7 @@ public class FanoutFilter implements ComplexFilter {
         
     @Override
     public FilterProperty[] getProperties() {
+        LOG.log(Level.INFO, "FanoutFilter.getProperties() called");
         try {
             return new FilterProperty[]{
                 FilterProperty.createProperty(this, String.class, "pattern"),

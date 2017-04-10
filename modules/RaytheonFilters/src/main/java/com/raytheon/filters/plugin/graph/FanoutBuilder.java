@@ -17,6 +17,8 @@ public class FanoutBuilder implements FilterBuilder {
 
     private static final Logger LOG = Logger.getLogger("com.raytheon.filters.plugin.graph");
     
+    private FanoutFilter fanoutFilter;
+    
     @Override
     public Category getCategory() {
         return FilterLibrary.TOPOLOGY;
@@ -45,8 +47,9 @@ public class FanoutBuilder implements FilterBuilder {
     @Override
     public JPanel getPanel(Filter filter) {
         LOG.log(Level.INFO, "FanoutBuilder.getPanel() called");
-        FanoutPanel panel = new FanoutPanel();
-        return panel;
+        FanoutPanel fanoutPanel = new FanoutPanel();
+        fanoutPanel.setup((FanoutFilter) filter);
+        return fanoutPanel;
     }
     
     @Override
