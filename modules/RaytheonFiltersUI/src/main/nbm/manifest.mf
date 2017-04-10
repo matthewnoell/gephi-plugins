@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-AutoUpdate-Essential-Module: true
+AutoUpdate-Essential-Module: false
 OpenIDE-Module-Localizing-Bundle: com/raytheon/ui/filters/plugin/Bundle.properties
 OpenIDE-Module-Display-Category: Plugin
 OpenIDE-Module-Name: Raytheon Filters UI
