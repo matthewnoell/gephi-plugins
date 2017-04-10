@@ -12,8 +12,11 @@ import java.util.Set;
 import org.gephi.filters.spi.FilterProperty;
 import org.gephi.filters.spi.ComplexFilter;
 import org.gephi.graph.api.Graph;
+import org.gephi.graph.api.GraphModel;
 import org.gephi.graph.api.Node;
 import org.gephi.graph.api.Edge;
+import org.gephi.graph.api.Table;
+import org.gephi.graph.api.Column;
 import org.openide.util.NbBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +35,22 @@ public class FanoutFilter implements ComplexFilter {
         
     @Override
     public Graph filter(Graph graph) {
+        GraphModel gm = graph.getModel();
+        Table nodeTable = gm.getNodeTable();
+        Column is_sequential = null;
+        
+        for (int i=0; i<nodeTable.countColumns(); i++) {
+            if (nodeTable.getColumn(i).getTitle().equals("is_sequential")) {
+                is_sequential = nodeTable.getColumn(i);
+                break;
+            }
+        }
+        if (is_sequential == null) {
+            LOG.log(Level.INFO, "Column 'is_sequential' not found!");
+        } else {
+            LOG.log(Level.INFO, "Column 'is_sequential' found!");
+        }
+        
         String str = pattern.toLowerCase();
             
         List<Node> nodes = new ArrayList<>();
@@ -57,7 +76,8 @@ public class FanoutFilter implements ComplexFilter {
                     if (e.getSource().equals(n) && !e.getSource().equals(e.getTarget())) {
                         LOG.log(Level.INFO, "Adding node {0} to neigh list", e.getTarget().getId().toString());
                         Node neighbor = e.getTarget();
-                        if (!result.contains(neighbor)) {
+                        if (!result.contains(neighbor) &&
+                                !neighbor.getAttribute(is_sequential).equals(Boolean.TRUE)) {
                             neighbours.add(neighbor);
                             result.add(neighbor);
                         }
@@ -104,26 +124,32 @@ public class FanoutFilter implements ComplexFilter {
     }
         
     public String getPattern() {
+        LOG.log(Level.INFO, "FanoutFilter.getPattern() called");
         return pattern;
     }
         
     public void setPattern(String pattern) {
+        LOG.log(Level.INFO, "FanoutFilter.setPattern() called");
         this.pattern = pattern;
     }
         
     public Integer getDepth() {
+        LOG.log(Level.INFO, "FanoutFilter.getDepth() called");
         return depth;
     }
         
     public void setDepth(Integer depth) {
+        LOG.log(Level.INFO, "FanoutFilter.setDepth() called");
         this.depth = depth;
     }
         
     public boolean isSelf() {
+        LOG.log(Level.INFO, "FanoutFilter.isSelf() called");
         return self;
     }
         
     public void setSelf(boolean self) {
+        LOG.log(Level.INFO, "FanoutFilter.setSelf() called");
         this.self = self;
     }
 }
