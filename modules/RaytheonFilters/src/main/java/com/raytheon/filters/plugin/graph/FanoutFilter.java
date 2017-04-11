@@ -69,6 +69,8 @@ public class FanoutFilter implements ComplexFilter {
         neighbours.addAll(nodes);
         
         for (int i = 0; i < depth; i++) {
+            int nodeCnt = 0;
+            LOG.log(Level.INFO, "Start of filtering stage {0}", i);            
             for (int j = 0; j < Integer.MAX_VALUE; j++) {
                 // Add Sequential Nodes from previous loop to be filtered
                 result.addAll(sequential);
@@ -88,6 +90,7 @@ public class FanoutFilter implements ComplexFilter {
                                 } else {
                                     neighbours.add(neighbor);
                                     result.add(neighbor);
+                                    nodeCnt++;
                                 }
                             }
                         }
@@ -101,6 +104,7 @@ public class FanoutFilter implements ComplexFilter {
             if (neighbours.isEmpty()) {
                 break;
             }
+            LOG.log(Level.INFO, "Nodes filtered at stage: {0}", nodeCnt);
         }
             
         if (self) {
