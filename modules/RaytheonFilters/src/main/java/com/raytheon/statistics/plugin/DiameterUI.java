@@ -2,14 +2,13 @@ package com.raytheon.statistics.plugin;
 
 import java.text.DecimalFormat;
 import javax.swing.JPanel;
-import org.gephi.filters.spi.Category;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.statistics.spi.StatisticsUI;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 
 @ServiceProvider(service = StatisticsUI.class)
-public class SubgraphDiameterUI implements StatisticsUI {
+public class DiameterUI implements StatisticsUI {
 
     private GraphDistancePanel panel;
     private GraphDistance graphDistance;
@@ -52,12 +51,13 @@ public class SubgraphDiameterUI implements StatisticsUI {
 
     @Override
     public String getDisplayName() {
-        return NbBundle.getMessage(getClass(), "SubgraphDiameterUI.name");
+        return NbBundle.getMessage(getClass(), "DiameterUI.name");
     }
 
     @Override
     public String getCategory() {
-        return StatisticsUI.CATEGORY_NETWORK_OVERVIEW;
+//        return StatisticsUI.CATEGORY_NETWORK_OVERVIEW;
+        return "Raytheon";
     }
 
     @Override
@@ -67,6 +67,6 @@ public class SubgraphDiameterUI implements StatisticsUI {
 
     @Override
     public String getShortDescription() {
-        return NbBundle.getMessage(getClass(), "SubgraphDiameterUI.shortDescription");
+        return NbBundle.getMessage(getClass(), "DiameterUI.shortDescription");
     }
 }
