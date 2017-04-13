@@ -2,14 +2,19 @@ package com.raytheon.statistics.plugin;
 
 import org.gephi.graph.api.GraphController;
 import org.openide.util.Lookup;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author pjmcswee
  */
 public class GraphDistancePanel extends javax.swing.JPanel {
+    
+    private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
     public GraphDistancePanel() {
+        LOG.log(Level.INFO, "GraphDistancePanel.GraphDistancePanel() called");
         initComponents();
         
         //Disable directed if the graph is undirecteds

@@ -1,10 +1,11 @@
 package com.raytheon.statistics.plugin;
 
-import org.gephi.statistics.plugin.GraphDistance;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.statistics.spi.StatisticsBuilder;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -12,6 +13,8 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service=StatisticsBuilder.class)
 public class GraphDistanceBuilder implements StatisticsBuilder {
+    
+    private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
     @Override
     public String getName() {

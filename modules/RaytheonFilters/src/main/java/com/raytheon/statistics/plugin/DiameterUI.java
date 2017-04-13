@@ -6,21 +6,27 @@ import org.gephi.statistics.spi.Statistics;
 import org.gephi.statistics.spi.StatisticsUI;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ServiceProvider(service = StatisticsUI.class)
 public class DiameterUI implements StatisticsUI {
+    
+    private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
     private GraphDistancePanel panel;
     private GraphDistance graphDistance;
 
     @Override
     public JPanel getSettingsPanel() {
+        LOG.log(Level.INFO, "DiameterUI.getSettingsPanel() called");
         panel = new GraphDistancePanel();
         return panel;
     }
 
     @Override
     public void setup(Statistics statistics) {
+        LOG.log(Level.INFO, "DiameterUI.setup() called");
         this.graphDistance = (GraphDistance) statistics;
         if (panel != null) {
             panel.setDirected(graphDistance.isDirected());

@@ -20,6 +20,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Ref: Ulrik Brandes, A Faster Algorithm for Betweenness Centrality, in Journal of Mathematical Sociology 25(2):163-177, (2001)
@@ -27,6 +29,8 @@ import org.openide.util.Lookup;
  * @author Matthew Noell <mnoell@raytheon.com>
  */
 public class GraphDistance implements Statistics, LongTask {
+    
+    private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
     public static final String BETWEENNESS = "betweenesscentrality";
     public static final String CLOSENESS = "closnesscentrality";
@@ -99,6 +103,7 @@ public class GraphDistance implements Statistics, LongTask {
      * Construct a GraphDistance calculator for the current graph model
      */
     public GraphDistance() {
+        LOG.log(Level.INFO, "GraphDistance.GraphDistance() called");
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
         if (graphController != null && graphController.getGraphModel() != null) {
             isDirected = graphController.getGraphModel().isDirected();
