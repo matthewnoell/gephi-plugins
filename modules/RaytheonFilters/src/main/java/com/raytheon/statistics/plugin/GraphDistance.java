@@ -31,7 +31,8 @@ import java.util.logging.Logger;
 public class GraphDistance implements Statistics, LongTask {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
-
+    private Column is_sequential = null;
+    
     public static final String BETWEENNESS = "betweenesscentrality";
     public static final String CLOSENESS = "closnesscentrality";
     public static final String HARMONIC_CLOSENESS = "harmonicclosnesscentrality";
@@ -116,6 +117,19 @@ public class GraphDistance implements Statistics, LongTask {
      */
     @Override
     public void execute(GraphModel graphModel) {
+        Table nodeTable = graphModel.getNodeTable();
+        for (int i=0; i<nodeTable.countColumns(); i++) {
+            if (nodeTable.getColumn(i).getTitle().equals("is_sequential")) {
+                is_sequential = nodeTable.getColumn(i);
+                break;
+            }
+        }
+        if (is_sequential == null) {
+            LOG.log(Level.INFO, "Column 'is_sequential' not found!");
+        } else {
+            LOG.log(Level.INFO, "Column 'is_sequential' found!");
+        }
+        
         isDirected = graphModel.isDirected();
 
         Graph graph;
@@ -193,12 +207,25 @@ public class GraphDistance implements Statistics, LongTask {
 
                 EdgeIterable edgeIter = getEdgeIter(graph, v, directed);
 
+                LOG.log(Level.INFO, "GraphDistance(): starting node {0}", v.getId().toString());
+                if (v.getAttribute(is_sequential).equals(Boolean.TRUE)) {
+                    LOG.log(Level.INFO, "GraphDistance(): is_sequential == TRUE for starting node {0}", v.getId().toString());
+                }
+                
                 for (Edge edge : edgeIter) {
                     Node reachable = graph.getOpposite(v, edge);
+                    
+                    LOG.log(Level.INFO, "GraphDistance(): reachable node {0}", reachable.getId().toString());
+                    if (reachable.getAttribute(is_sequential).equals(Boolean.TRUE)) {
+                        LOG.log(Level.INFO, "GraphDistance(): is_sequential == TRUE for reachable node {0}", reachable.getId().toString());
+                    }
 
                     int r_index = indicies.get(reachable);
                     if (d[r_index] < 0) {
-                        Q.addLast(reachable);
+                        // Don't go past a node with attribute 'is_sequential' == TRUE
+                        if (!reachable.getAttribute(is_sequential).equals(Boolean.TRUE)) {
+                            Q.addLast(reachable);
+                        }
                         d[r_index] = d[v_index] + 1;
                     }
                     if (d[r_index] == (d[v_index] + 1)) {
@@ -279,16 +306,16 @@ public class GraphDistance implements Statistics, LongTask {
     private void initializeAttributeColunms(GraphModel graphModel) {
         Table nodeTable = graphModel.getNodeTable();
         if (!nodeTable.hasColumn(ECCENTRICITY)) {
-            nodeTable.addColumn(ECCENTRICITY, "Eccentricity", Double.class, new Double(0));
+            nodeTable.addColumn(ECCENTRICITY, "Combinational Eccentricity", Double.class, new Double(0));
         }
         if (!nodeTable.hasColumn(CLOSENESS)) {
-            nodeTable.addColumn(CLOSENESS, "Closeness Centrality", Double.class, new Double(0));
+            nodeTable.addColumn(CLOSENESS, "Combinational Closeness Centrality", Double.class, new Double(0));
         }
         if (!nodeTable.hasColumn(HARMONIC_CLOSENESS)) {
-            nodeTable.addColumn(HARMONIC_CLOSENESS, "Harmonic Closeness Centrality", Double.class, new Double(0));
+            nodeTable.addColumn(HARMONIC_CLOSENESS, "Combinational Harmonic Closeness Centrality", Double.class, new Double(0));
         }
         if (!nodeTable.hasColumn(BETWEENNESS)) {
-            nodeTable.addColumn(BETWEENNESS, "Betweenness Centrality", Double.class, new Double(0));
+            nodeTable.addColumn(BETWEENNESS, "Combinational Betweenness Centrality", Double.class, new Double(0));
         }
     }
 
@@ -404,10 +431,10 @@ public class GraphDistance implements Statistics, LongTask {
         String htmlIMG4 = "";
         try {
             TempDir tempDir = TempDirUtils.createTempDir();
-            htmlIMG1 = createImageFile(tempDir, betweenness, "Betweenness Centrality Distribution", "Value", "Count");
-            htmlIMG2 = createImageFile(tempDir, closeness, "Closeness Centrality Distribution", "Value", "Count");
-            htmlIMG3 = createImageFile(tempDir, harmonicCloseness, "Harmonic Closeness Centrality Distribution", "Value", "Count");
-            htmlIMG4 = createImageFile(tempDir, eccentricity, "Eccentricity Distribution", "Value", "Count");
+            htmlIMG1 = createImageFile(tempDir, betweenness, "Combinational Betweenness Centrality Distribution", "Value", "Count");
+            htmlIMG2 = createImageFile(tempDir, closeness, "Combinational Closeness Centrality Distribution", "Value", "Count");
+            htmlIMG3 = createImageFile(tempDir, harmonicCloseness, "Combinational Harmonic Closeness Centrality Distribution", "Value", "Count");
+            htmlIMG4 = createImageFile(tempDir, eccentricity, "Combinational Eccentricity Distribution", "Value", "Count");
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
