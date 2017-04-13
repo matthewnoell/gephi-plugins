@@ -33,10 +33,10 @@ public class GraphDistance implements Statistics, LongTask {
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
     private Column is_sequential = null;
     
-    public static final String BETWEENNESS = "betweenesscentrality";
-    public static final String CLOSENESS = "closnesscentrality";
-    public static final String HARMONIC_CLOSENESS = "harmonicclosnesscentrality";
-    public static final String ECCENTRICITY = "eccentricity";
+    public static final String BETWEENNESS = "combinationalbetweenesscentrality";
+    public static final String CLOSENESS = "combinationalclosnesscentrality";
+    public static final String HARMONIC_CLOSENESS = "combinationalharmonicclosnesscentrality";
+    public static final String ECCENTRICITY = "combinationaleccentricity";
     /**
      *
      */
