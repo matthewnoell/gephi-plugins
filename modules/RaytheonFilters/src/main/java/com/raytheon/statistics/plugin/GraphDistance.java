@@ -123,11 +123,6 @@ public class GraphDistance implements Statistics, LongTask {
                 break;
             }
         }
-        if (is_sequential == null) {
-            LOG.log(Level.INFO, "Column 'is_sequential' not found!");
-        } else {
-            LOG.log(Level.INFO, "Column 'is_sequential' found!");
-        }
         
         isDirected = graphModel.isDirected();
 
@@ -205,26 +200,25 @@ public class GraphDistance implements Statistics, LongTask {
                 // push visited nodes on stack for phase 2
                 S.push(v);
                 // stop here if v is a sequntial node
-                if (v != s && v.getAttribute(is_sequential).equals(Boolean.TRUE)) {
-                    break;
-                }
-                int v_index = indicies.get(v);
+                if (v == s || (!v.getAttribute(is_sequential).equals(Boolean.TRUE))) {
+                    int v_index = indicies.get(v);
 
-                EdgeIterable edgeIter = getEdgeIter(graph, v, directed);
+                    EdgeIterable edgeIter = getEdgeIter(graph, v, directed);
                 
-                for (Edge edge : edgeIter) {
-                    Node reachable = graph.getOpposite(v, edge);
+                    for (Edge edge : edgeIter) {
+                        Node reachable = graph.getOpposite(v, edge);
 
-                    int r_index = indicies.get(reachable);
-                    // path discovery - w found for the first time?
-                    if (d[r_index] < 0) {
-                        Q.addLast(reachable);
-                        d[r_index] = d[v_index] + 1;
-                    }
-                    // path counting - edge (v,w) on a shortest path?
-                    if (d[r_index] == (d[v_index] + 1)) {
-                        theta[r_index] = theta[r_index] + theta[v_index];
-                        P[r_index].addLast(v);
+                        int r_index = indicies.get(reachable);
+                        // path discovery - w found for the first time?
+                        if (d[r_index] < 0) {
+                            Q.addLast(reachable);
+                            d[r_index] = d[v_index] + 1;
+                        }
+                        // path counting - edge (v,w) on a shortest path?
+                        if (d[r_index] == (d[v_index] + 1)) {
+                            theta[r_index] = theta[r_index] + theta[v_index];
+                            P[r_index].addLast(v);
+                        }
                     }
                 }
             }

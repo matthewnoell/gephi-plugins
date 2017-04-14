@@ -19,14 +19,12 @@ public class DiameterUI implements StatisticsUI {
 
     @Override
     public JPanel getSettingsPanel() {
-        LOG.log(Level.INFO, "DiameterUI.getSettingsPanel() called");
         panel = new GraphDistancePanel();
         return panel;
     }
 
     @Override
     public void setup(Statistics statistics) {
-        LOG.log(Level.INFO, "DiameterUI.setup() called");
         this.graphDistance = (GraphDistance) statistics;
         if (panel != null) {
             panel.setDirected(graphDistance.isDirected());

@@ -14,7 +14,6 @@ public class GraphDistancePanel extends javax.swing.JPanel {
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
     public GraphDistancePanel() {
-        LOG.log(Level.INFO, "GraphDistancePanel.GraphDistancePanel() called");
         initComponents();
         
         //Disable directed if the graph is undirecteds
