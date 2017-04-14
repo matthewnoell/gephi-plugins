@@ -190,9 +190,9 @@ public class GraphDistance implements Statistics, LongTask {
         for (Node s : graph.getNodes()) {
             Stack<Node> S = new Stack<>();
 
-            LinkedList<Node>[] P = new LinkedList[n];
-            double[] theta = new double[n];
-            int[] d = new int[n];
+            LinkedList<Node>[] P = new LinkedList[n];  // list of predecessors on shortest path from source
+            double[] theta = new double[n];            // number of shortest paths from source to v
+            int[] d = new int[n];                      // distance from source
 
             int s_index = indicies.get(s);
 
@@ -200,11 +200,16 @@ public class GraphDistance implements Statistics, LongTask {
 
             LinkedList<Node> Q = new LinkedList<>();
             Q.addLast(s);
+            // phase 1 - breadth first search
             while (!Q.isEmpty()) {
                 Node v = Q.removeFirst();
                 S.push(v);
                 int v_index = indicies.get(v);
+                LOG.log(Level.INFO, "GraphDistance(): v_index = {0}", v_index);
 
+                if (v != s && !v.getAttribute(is_sequential).equals(Boolean.TRUE)) {
+                    
+                }
                 EdgeIterable edgeIter = getEdgeIter(graph, v, directed);
 
                 LOG.log(Level.INFO, "GraphDistance(): starting node {0}", v.getId().toString());
@@ -221,13 +226,13 @@ public class GraphDistance implements Statistics, LongTask {
                     }
 
                     int r_index = indicies.get(reachable);
+                    LOG.log(Level.INFO, "GraphDistance(): r_index = {0}", r_index);
+                    // path discovery - w found for the first time?
                     if (d[r_index] < 0) {
-                        // Don't go past a node with attribute 'is_sequential' == TRUE
-                        if (!reachable.getAttribute(is_sequential).equals(Boolean.TRUE)) {
-                            Q.addLast(reachable);
-                        }
+                        Q.addLast(reachable);
                         d[r_index] = d[v_index] + 1;
                     }
+                    // path counting - edge (v,w) on a shortest path?
                     if (d[r_index] == (d[v_index] + 1)) {
                         theta[r_index] = theta[r_index] + theta[v_index];
                         P[r_index].addLast(v);
@@ -255,20 +260,35 @@ public class GraphDistance implements Statistics, LongTask {
 
             totalPaths += reachable;
 
+            LOG.log(Level.INFO, "GraphDistance(): calculate betweenness");
             double[] delta = new double[n];
+            // phase 2 - visit nodes in reverse order of discovery, to accumulate dependencies
+            // back-propagation of dependencies
             while (!S.empty()) {
                 Node w = S.pop();
+                if (w.getAttribute(is_sequential).equals(Boolean.TRUE)) {
+                    LOG.log(Level.INFO, "GraphDistance(): is_sequential == TRUE for reachable node {0}", w.getId().toString());
+                }
                 int w_index = indicies.get(w);
                 ListIterator<Node> iter1 = P[w_index].listIterator();
+                LOG.log(Level.INFO, "  w = {0}, w_index = {1}", new Object[] {w.getId().toString(), w_index});
+                LOG.log(Level.INFO, "  go though each path");
                 while (iter1.hasNext()) {
                     Node u = iter1.next();
+                    LOG.log(Level.INFO, "  Path from {0} to {1}", new Object[] {w.getId().toString(),u.getId().toString()});
                     int u_index = indicies.get(u);
-                    delta[u_index] += (theta[u_index] / theta[w_index]) * (1 + delta[w_index]);
+                    // Don't back-propagate from a sequential node
+                    if (w.getAttribute(is_sequential).equals(Boolean.TRUE)) {
+                        delta[u_index] += (theta[u_index] / theta[w_index]);
+                    } else {
+                        delta[u_index] += (theta[u_index] / theta[w_index]) * (1 + delta[w_index]);
+                    }
                 }
                 if (w != s) {
                     nodeBetweenness[w_index] += delta[w_index];
                 }
             }
+            LOG.log(Level.INFO, "GraphDistance(): end calculate betweenness");
             count++;
             if (isCanceled) {
                 return metrics;
