@@ -138,7 +138,7 @@ public class GraphDistance implements Statistics, LongTask {
     public void execute(Graph graph) {
         isCanceled = false;
 
-        initializeAttributeColunms(graph.getModel());
+        initializeAttributeColumns(graph.getModel());
 
         graph.readLock();
         try {
@@ -293,7 +293,7 @@ public class GraphDistance implements Statistics, LongTask {
         return edgeIter;
     }
 
-    private void initializeAttributeColunms(GraphModel graphModel) {
+    private void initializeAttributeColumns(GraphModel graphModel) {
         Table nodeTable = graphModel.getNodeTable();
         if (!nodeTable.hasColumn(ECCENTRICITY)) {
             nodeTable.addColumn(ECCENTRICITY, "Combinational Eccentricity", Double.class, new Double(0));
