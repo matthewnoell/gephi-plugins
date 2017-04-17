@@ -199,7 +199,7 @@ public class GraphDistance implements Statistics, LongTask {
                 Node v = Q.removeFirst();
                 // push visited nodes on stack for phase 2
                 S.push(v);
-                // stop here if v is a sequntial node
+                // stop here if v is a sequential node
                 if (v == s || (!v.getAttribute(is_sequential).equals(Boolean.TRUE))) {
                     int v_index = indicies.get(v);
 
