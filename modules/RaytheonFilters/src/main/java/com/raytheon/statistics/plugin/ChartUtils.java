@@ -1,5 +1,7 @@
 package com.raytheon.statistics.plugin;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -15,6 +17,8 @@ import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
+import org.jfree.chart.encoders.KeypointPNGEncoderAdapter;
+import java.io.FileOutputStream;
 
 /**
  *
@@ -28,7 +32,8 @@ public abstract class ChartUtils {
         renderer.setSeriesLinesVisible(0, false);
         renderer.setSeriesShapesVisible(0, true);
         renderer.setSeriesShape(0, new java.awt.geom.Ellipse2D.Double(0, 0, 2, 2));
-        plot.setBackgroundPaint(java.awt.Color.WHITE);
+//        plot.setBackgroundPaint(java.awt.Color.WHITE);
+        plot.setBackgroundPaint(new Color(0,0,0,0.0f));
         plot.setDomainGridlinePaint(java.awt.Color.GRAY);
         plot.setRangeGridlinePaint(java.awt.Color.GRAY);
         plot.setRenderer(renderer);
@@ -55,8 +60,14 @@ public abstract class ChartUtils {
             final ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
             TempDir tempDir = TempDirUtils.createTempDir();
             File file1 = tempDir.createFile(fileName);
+            FileOutputStream fout = new FileOutputStream(file1);
             imageFile = "<IMG SRC=\"file:" + file1.getAbsolutePath() + "\" " + "WIDTH=\"600\" HEIGHT=\"400\" BORDER=\"0\" USEMAP=\"#chart\"></IMG>";
-            ChartUtilities.saveChartAsPNG(file1, chart, 600, 400, info);
+            BufferedImage bufferedImage = chart.createBufferedImage(600, 400, BufferedImage.TYPE_4BYTE_ABGR, null);
+            KeypointPNGEncoderAdapter encoder = new KeypointPNGEncoderAdapter();
+            encoder.setEncodingAlpha(true);
+            encoder.encode(bufferedImage, fout);
+            fout.close();
+//            ChartUtilities.saveChartAsPNG(file1, chart, 600, 400, info);
         } catch (IOException e) {
         }
         return imageFile;

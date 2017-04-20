@@ -11,6 +11,9 @@ import org.gephi.graph.api.Node;
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.Table;
 import org.gephi.graph.api.Column;
+import org.gephi.project.api.ProjectController;
+import org.gephi.project.api.Workspace;
+import org.gephi.project.api.WorkspaceInformation;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.TempDirUtils;
 import org.gephi.utils.longtask.spi.LongTask;
@@ -19,16 +22,21 @@ import org.gephi.utils.progress.ProgressTicket;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.encoders.KeypointPNGEncoderAdapter;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FilenameUtils;
+import org.openide.util.Lookup;
 
 public class EdgeMetrics implements Statistics, LongTask {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
+    
+    private String sourceName;
     
     private Column cell = null;
     private Column origin_x = null;
@@ -76,6 +84,10 @@ public class EdgeMetrics implements Statistics, LongTask {
     @Override
     public void execute(GraphModel graphModel) {
         LOG.log(Level.INFO, "EdgeMetric.execute() ovverride");
+        
+        sourceName = getSourceName();
+        LOG.log(Level.INFO, "EdgeMetric.execute(): fileName = {0}", sourceName);
+        
         Table nodeTable = graphModel.getNodeTable();
         for (int i=0; i<nodeTable.countColumns(); i++) {
             if (nodeTable.getColumn(i).getTitle().equals(CELL)) {
@@ -211,7 +223,7 @@ public class EdgeMetrics implements Statistics, LongTask {
      * @return
      */
     
-    private String createImageFile(TempDirUtils.TempDir tempDir, double[] pVals, String pName, String pX, String pY) {
+    private String createImageFile(TempDirUtils.TempDir tempDir, double[] pVals, String sName, String pName, String pX, String pY) {
         LOG.log(Level.INFO, "EdgeMetric.createImageFile()");
         //distribution of values
         Map<Double, Integer> dist = new HashMap<>();
@@ -247,7 +259,7 @@ public class EdgeMetrics implements Statistics, LongTask {
         dataset.addSeries(dSeries);
 
         JFreeChart chart = ChartFactory.createXYLineChart(
-                pName,
+                pName + " (source = " + sName + ")",
                 pX,
                 pY,
                 dataset,
@@ -258,7 +270,7 @@ public class EdgeMetrics implements Statistics, LongTask {
         chart.removeLegend();
         ChartUtils.decorateChart(chart);
         ChartUtils.scaleChart(chart, dSeries, false);
-        return ChartUtils.renderChart(chart, pName + ".png");
+        return ChartUtils.renderChart(chart, sName + "-" + pName.toLowerCase().replaceAll(" ", "-") + ".png");
     }
     
     @Override
@@ -268,7 +280,7 @@ public class EdgeMetrics implements Statistics, LongTask {
         
         try {
             TempDirUtils.TempDir tempDir = TempDirUtils.createTempDir();
-            htmlIMG = createImageFile(tempDir, edgeLength, "Distance Distribution", "Value", "Count");
+            htmlIMG = createImageFile(tempDir, edgeLength, sourceName, "Distance Distribution", "Value", "Count");
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -285,6 +297,13 @@ public class EdgeMetrics implements Statistics, LongTask {
         return report;
     }
 
+    private String getSourceName() {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        Workspace workspace = pc.getCurrentWorkspace();
+        WorkspaceInformation info = workspace.getLookup().lookup(WorkspaceInformation.class);
+        return FilenameUtils.getBaseName(info.getSource());
+    }
+    
     /**
      *
      * @return
