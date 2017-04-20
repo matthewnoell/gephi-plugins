@@ -10,6 +10,7 @@ import org.gephi.graph.api.GraphModel;
 import org.gephi.graph.api.Node;
 import org.gephi.graph.api.Edge;
 import org.gephi.graph.api.Table;
+import org.gephi.graph.api.Column;
 import org.gephi.statistics.spi.Statistics;
 import org.gephi.utils.TempDirUtils;
 import org.gephi.utils.longtask.spi.LongTask;
@@ -22,16 +23,26 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class EdgeMetrics implements Statistics, LongTask {
+    
+    private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
+    
+    private Column cell = null;
+    private Column origin_x = null;
+    private Column origin_y = null;
 
     public static final String EDGE_LENGTH = "length";
+    public static final String CELL = "cell";
     public static final String ORIGIN_X = "origin_x";
     public static final String ORIGIN_Y = "origin_y";
     
     private double[] edgeLength;
     
-    private int N;
+    private int TOTAL_EDGES;
+    private int edgeCount;
     private double avgEdgeLength;
     
     /**
@@ -54,6 +65,7 @@ public class EdgeMetrics implements Statistics, LongTask {
      * @return
      */
     public double getAverageEdgeLength() {
+        LOG.log(Level.INFO, "EdgeMetrics.getAverageEdgeLength()");
         return avgEdgeLength;
     }
 
@@ -63,6 +75,19 @@ public class EdgeMetrics implements Statistics, LongTask {
      */
     @Override
     public void execute(GraphModel graphModel) {
+        LOG.log(Level.INFO, "EdgeMetric.execute() ovverride");
+        Table nodeTable = graphModel.getNodeTable();
+        for (int i=0; i<nodeTable.countColumns(); i++) {
+            if (nodeTable.getColumn(i).getTitle().equals(CELL)) {
+                cell = nodeTable.getColumn(i);
+            }
+            if (nodeTable.getColumn(i).getTitle().equals(ORIGIN_X)) {
+                origin_x = nodeTable.getColumn(i);
+            }
+            if (nodeTable.getColumn(i).getTitle().equals(ORIGIN_Y)) {
+                origin_y = nodeTable.getColumn(i);
+            }   
+        }
         isDirected = graphModel.isDirected();
 
         Graph graph;
@@ -75,15 +100,18 @@ public class EdgeMetrics implements Statistics, LongTask {
     }
 
     public void execute(Graph graph) {
+        LOG.log(Level.INFO, "EdgeMetric.execute()");
         isCanceled = false;
 
         initializeAttributeColumns(graph.getModel());
 
         graph.readLock();
         try {
-            N = graph.getEdgeCount();
+            TOTAL_EDGES = graph.getEdgeCount();
             
             HashMap<Edge, Integer> indicies = createIndiciesMap(graph);
+            
+            initializeStartValues();
 
             Map<String, double[]> metrics = calculateEdgeMetrics(graph, indicies, isDirected, isNormalized);
             
@@ -96,30 +124,32 @@ public class EdgeMetrics implements Statistics, LongTask {
     }
 
     public Map<String, double[]> calculateEdgeMetrics(Graph graph, HashMap<Edge, Integer> indicies, boolean directed, boolean normalized) {
-        int e = graph.getEdgeCount();
+        LOG.log(Level.INFO, "EdgeMetric.calculateEdgeMetrics()");
         
         HashMap<String, double[]> metrics = new HashMap<>();
 
-        double[] edgeLength = new double[e];
+        double[] edgeLength = new double[edgeCount];
         
         metrics.put(EDGE_LENGTH, edgeLength);
         
-        Progress.start(progress, graph.getEdgeCount());
+        Progress.start(progress, edgeCount);
         int count = 0;
         
         for (Edge edge : graph.getEdges()) {
-            int i = indicies.get(edge);    
-            edgeLength[i] = calculateEdgeLength(graph, edge);
-            avgEdgeLength += edgeLength[i];
+            int i = indicies.get(edge);
+            if (i < TOTAL_EDGES) {
+                edgeLength[i] = calculateEdgeLength(graph, edge);
+                avgEdgeLength += edgeLength[i];
+                count++;
+            }
             
-            count++;
             if (isCanceled) {
                 return metrics;
             }
             Progress.progress(progress, count);
         }
         
-        avgEdgeLength /= graph.getEdgeCount();
+        avgEdgeLength /= edgeCount;
         
         return metrics;
     }
@@ -128,38 +158,51 @@ public class EdgeMetrics implements Statistics, LongTask {
         Node u = edge.getSource();
         Node v = edge.getTarget();
         
-        return Math.abs((Double) v.getAttribute(ORIGIN_X) - (Double) u.getAttribute(ORIGIN_X))
-                + Math.abs((Double) v.getAttribute(ORIGIN_Y) - (Double) u.getAttribute(ORIGIN_Y));
+        return Math.abs((Double) v.getAttribute(origin_x) - (Double) u.getAttribute(origin_x))
+                + Math.abs((Double) v.getAttribute(origin_y) - (Double) u.getAttribute(origin_y));
     }
     
     public HashMap<Edge, Integer> createIndiciesMap(Graph graph) {
+        LOG.log(Level.INFO, "EdgeMetric.createIndicesMap()");
         HashMap<Edge, Integer> indicies = new HashMap<>();
         int index = 0;
         for (Edge e : graph.getEdges()) {
-            indicies.put(e, index);
-            index++;
-        }
+            if (e.getSource().getAttribute(cell).equals("port")
+                    || e.getTarget().getAttribute(cell).equals("port")) {
+                indicies.put(e, TOTAL_EDGES);
+            }
+            else {
+                indicies.put(e, index);
+                index++;
+            }
+        }  
+        edgeCount = index;
         return indicies;
     }
     
     public void initializeStartValues() {
-        edgeLength = new double[N];
+        LOG.log(Level.INFO, "EdgeMetric.initializeStartValues()");
+        edgeLength = new double[edgeCount];
         avgEdgeLength = 0;
     }
     
     private void saveCalculatedValues(Graph graph, HashMap<Edge, Integer> indicies, double[] edgeLength) {
+        LOG.log(Level.INFO, "EdgeMetric.saveCalculatedValues()");
         for (Edge s : graph.getEdges()) {
             int s_index = indicies.get(s);
-
-            s.setAttribute(EDGE_LENGTH, edgeLength[s_index]);
+            
+            if (s_index < TOTAL_EDGES) {
+                s.setAttribute(EDGE_LENGTH, edgeLength[s_index]);
+            }
         }
     }
      
 
     private void initializeAttributeColumns(GraphModel graphModel) {
+        LOG.log(Level.INFO, "EdgeMetric.initializeAttributeColumns()");
         Table edgeTable = graphModel.getEdgeTable();
         if (!edgeTable.hasColumn(EDGE_LENGTH)) {
-            edgeTable.addColumn(EDGE_LENGTH, NbBundle.getMessage(EdgeMetrics.class, "Distance.edgecolumn.Length"), Double.class, new Double(0));
+            edgeTable.addColumn(EDGE_LENGTH, NbBundle.getMessage(EdgeMetrics.class, "EdgeMetrics.edgecolumn.Length"), Double.class, new Double(0));
         }
     }
 
@@ -168,16 +211,32 @@ public class EdgeMetrics implements Statistics, LongTask {
      * @return
      */
     
-    private String createImageFile(TempDirUtils.TempDir tempDir, double[] pVals, String pName, String pX, String pY) {         
+    private String createImageFile(TempDirUtils.TempDir tempDir, double[] pVals, String pName, String pX, String pY) {
+        LOG.log(Level.INFO, "EdgeMetric.createImageFile()");
         //distribution of values
         Map<Double, Integer> dist = new HashMap<>();
-        for (int i = 0; i < N; i++) {
-            Double d = pVals[i];
-            if (dist.containsKey(d)) {
-                Integer v = dist.get(d);
-                dist.put(d, v + 1);
-            } else {
-                dist.put(d, 1);
+        
+        Double max = 0.0;
+        for (int i = 0; i < edgeCount; i++) {
+            if (pVals[i] > max) {
+                max = pVals[i];
+            }
+        }
+        
+        max = 200.0;
+        
+        int numBins = 100;
+        Double binSize = max/numBins;
+        for (int i = 0; i < edgeCount; i++) {
+            if (pVals[i] < max) {
+                int bin = (int) (pVals[i] / binSize);
+                Double d = binSize*bin + (binSize/2);
+                if (dist.containsKey(d)) {
+                    Integer v = dist.get(d);
+                    dist.put(d, v + 1);
+                } else {
+                    dist.put(d, 1);
+                }
             }
         }
         
@@ -204,6 +263,7 @@ public class EdgeMetrics implements Statistics, LongTask {
     
     @Override
     public String getReport() {
+        LOG.log(Level.INFO, "EdgeMetric.getReport()");
         String htmlIMG = "";
         
         try {
