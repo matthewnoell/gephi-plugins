@@ -56,6 +56,7 @@ public class EdgeMetrics implements Statistics, LongTask {
     private double[] edgeLength;
     
     private int TOTAL_EDGES;
+    private int nodeCount;
     private int edgeCount;
     private double avgEdgeLength;
     
@@ -195,6 +196,13 @@ public class EdgeMetrics implements Statistics, LongTask {
             }
         }  
         edgeCount = index;
+        index = 0;
+        for (Node n : graph.getNodes()) {
+            if (!n.getAttribute(cell).equals("port")) {
+                index++;
+            }
+        }
+        nodeCount = index;
         return indicies;
     }
     
@@ -304,6 +312,8 @@ public class EdgeMetrics implements Statistics, LongTask {
         String report = "<HTML> <BODY> <h1>Distance Report </h1> "
                 + "<hr>"
                 + "<br> <h2> Results: </h2>"
+                + "Number of Nodes: " + nodeCount + "<br />"
+                + "Number of Edges: " + edgeCount + "<br />"
                 + "Average Distance Between Node Pairs: " + f.format(avgEdgeLength)
                 + "<br /><br />" + htmlIMG
                 + "</BODY></HTML>";
