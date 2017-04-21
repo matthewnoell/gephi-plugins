@@ -1,9 +1,14 @@
 package com.raytheon.statistics.plugin;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphModel;
@@ -30,6 +35,12 @@ import org.openide.util.NbBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.title.Title;
+import org.jfree.ui.HorizontalAlignment;
+import org.jfree.ui.RectangleEdge;
+import org.jfree.ui.RectangleInsets;
+import org.jfree.ui.VerticalAlignment;
 import org.openide.util.Lookup;
 
 public class EdgeMetrics implements Statistics, LongTask {
@@ -259,7 +270,7 @@ public class EdgeMetrics implements Statistics, LongTask {
         dataset.addSeries(dSeries);
 
         JFreeChart chart = ChartFactory.createXYLineChart(
-                pName + " (source = " + sName + ")",
+                pName,
                 pX,
                 pY,
                 dataset,
@@ -268,6 +279,14 @@ public class EdgeMetrics implements Statistics, LongTask {
                 false,
                 false);
         chart.removeLegend();
+        String date = new Date().toString();
+        TextTitle subTitle = new TextTitle("Graph: " + sName + " (" + date + ")");
+        subTitle.setFont(new Font("Dialog", Font.ITALIC, 12));
+        subTitle.setPaint(java.awt.Color.BLACK);
+        subTitle.setPosition(RectangleEdge.BOTTOM);
+        subTitle.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        subTitle.setVerticalAlignment(VerticalAlignment.BOTTOM);
+        chart.addSubtitle(subTitle);
         ChartUtils.decorateChart(chart);
         ChartUtils.scaleChart(chart, dSeries, false);
         return ChartUtils.renderChart(chart, sName + "-" + pName.toLowerCase().replaceAll(" ", "-") + ".png");

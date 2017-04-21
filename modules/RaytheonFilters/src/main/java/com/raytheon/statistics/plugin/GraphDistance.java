@@ -1,6 +1,8 @@
 package com.raytheon.statistics.plugin;
 
+import java.awt.Font;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -26,6 +28,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.gephi.project.api.ProjectController;
 import org.gephi.project.api.Workspace;
 import org.gephi.project.api.WorkspaceInformation;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.ui.HorizontalAlignment;
+import org.jfree.ui.RectangleEdge;
+import org.jfree.ui.VerticalAlignment;
 
 /**
  * Ref: Ulrik Brandes, A Faster Algorithm for Betweenness Centrality, in Journal of Mathematical Sociology 25(2):163-177, (2001)
@@ -412,6 +418,14 @@ public class GraphDistance implements Statistics, LongTask {
                 false,
                 false);
         chart.removeLegend();
+        String date = new Date().toString();
+        TextTitle subTitle = new TextTitle("Graph: " + sName + " (" + date + ")");
+        subTitle.setFont(new Font("Dialog", Font.ITALIC, 12));
+        subTitle.setPaint(java.awt.Color.BLACK);
+        subTitle.setPosition(RectangleEdge.BOTTOM);
+        subTitle.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        subTitle.setVerticalAlignment(VerticalAlignment.BOTTOM);
+        chart.addSubtitle(subTitle);
         ChartUtils.decorateChart(chart);
         ChartUtils.scaleChart(chart, dSeries, isNormalized);
         return ChartUtils.renderChart(chart, sName + "-" + pName.toLowerCase().replaceAll(" ", "-") + ".png");
