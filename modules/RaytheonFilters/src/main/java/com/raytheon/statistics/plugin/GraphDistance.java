@@ -22,6 +22,10 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FilenameUtils;
+import org.gephi.project.api.ProjectController;
+import org.gephi.project.api.Workspace;
+import org.gephi.project.api.WorkspaceInformation;
 
 /**
  * Ref: Ulrik Brandes, A Faster Algorithm for Betweenness Centrality, in Journal of Mathematical Sociology 25(2):163-177, (2001)
@@ -31,6 +35,8 @@ import java.util.logging.Logger;
 public class GraphDistance implements Statistics, LongTask {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
+    
+    private String sourceName;
     private Column is_sequential = null;
     
     public static final String BETWEENNESS = "combinationalbetweenesscentrality";
@@ -116,6 +122,8 @@ public class GraphDistance implements Statistics, LongTask {
      */
     @Override
     public void execute(GraphModel graphModel) {
+        sourceName = getSourceName();
+        
         Table nodeTable = graphModel.getNodeTable();
         for (int i=0; i<nodeTable.countColumns(); i++) {
             if (nodeTable.getColumn(i).getTitle().equals("is_sequential")) {
@@ -375,7 +383,7 @@ public class GraphDistance implements Statistics, LongTask {
         return isDirected;
     }
 
-    private String createImageFile(TempDir tempDir, double[] pVals, String pName, String pX, String pY) {
+    private String createImageFile(TempDir tempDir, double[] pVals, String sName, String pName, String pX, String pY) {
         //distribution of values
         Map<Double, Integer> dist = new HashMap<>();
         for (int i = 0; i < N; i++) {
@@ -406,7 +414,7 @@ public class GraphDistance implements Statistics, LongTask {
         chart.removeLegend();
         ChartUtils.decorateChart(chart);
         ChartUtils.scaleChart(chart, dSeries, isNormalized);
-        return ChartUtils.renderChart(chart, pName + ".png");
+        return ChartUtils.renderChart(chart, sName + "-" + pName.toLowerCase().replaceAll(" ", "-") + ".png");
     }
 
     /**
@@ -421,10 +429,10 @@ public class GraphDistance implements Statistics, LongTask {
         String htmlIMG4 = "";
         try {
             TempDir tempDir = TempDirUtils.createTempDir();
-            htmlIMG1 = createImageFile(tempDir, betweenness, "Combinational Betweenness Centrality Distribution", "Value", "Count");
-            htmlIMG2 = createImageFile(tempDir, closeness, "Combinational Closeness Centrality Distribution", "Value", "Count");
-            htmlIMG3 = createImageFile(tempDir, harmonicCloseness, "Combinational Harmonic Closeness Centrality Distribution", "Value", "Count");
-            htmlIMG4 = createImageFile(tempDir, eccentricity, "Combinational Eccentricity Distribution", "Value", "Count");
+            htmlIMG1 = createImageFile(tempDir, betweenness, sourceName, "Combinational Betweenness Centrality Distribution", "Value", "Count");
+            htmlIMG2 = createImageFile(tempDir, closeness, sourceName, "Combinational Closeness Centrality Distribution", "Value", "Count");
+            htmlIMG3 = createImageFile(tempDir, harmonicCloseness, sourceName, "Combinational Harmonic Closeness Centrality Distribution", "Value", "Count");
+            htmlIMG4 = createImageFile(tempDir, eccentricity, sourceName, "Combinational Eccentricity Distribution", "Value", "Count");
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -447,6 +455,13 @@ public class GraphDistance implements Statistics, LongTask {
                 + "</BODY> </HTML>";
 
         return report;
+    }
+    
+    private String getSourceName() {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        Workspace workspace = pc.getCurrentWorkspace();
+        WorkspaceInformation info = workspace.getLookup().lookup(WorkspaceInformation.class);
+        return FilenameUtils.getBaseName(info.getSource());
     }
 
     /**
