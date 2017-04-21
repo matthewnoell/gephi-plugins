@@ -1,14 +1,11 @@
 package com.raytheon.statistics.plugin;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphModel;
@@ -36,10 +33,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FilenameUtils;
 import org.jfree.chart.title.TextTitle;
-import org.jfree.chart.title.Title;
 import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.RectangleEdge;
-import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.VerticalAlignment;
 import org.openide.util.Lookup;
 
