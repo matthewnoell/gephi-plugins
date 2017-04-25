@@ -9,11 +9,11 @@ import java.util.logging.Logger;
  *
  * @author pjmcswee
  */
-public class GraphDistancePanel extends javax.swing.JPanel {
+public class LogicDistancePanel extends javax.swing.JPanel {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
-    public GraphDistancePanel() {
+    public LogicDistancePanel() {
         initComponents();
         
         //Disable directed if the graph is undirecteds
@@ -65,7 +65,7 @@ public class GraphDistancePanel extends javax.swing.JPanel {
         normalizeButton = new javax.swing.JCheckBox();
 
         directedButtonGroup.add(directedRadioButton);
-        directedRadioButton.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.directedRadioButton.text")); // NOI18N
+        directedRadioButton.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.directedRadioButton.text")); // NOI18N
         directedRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 directedRadioButtonActionPerformed(evt);
@@ -73,43 +73,40 @@ public class GraphDistancePanel extends javax.swing.JPanel {
         });
 
         directedButtonGroup.add(undirectedRadioButton);
-        undirectedRadioButton.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.undirectedRadioButton.text")); // NOI18N
+        undirectedRadioButton.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.undirectedRadioButton.text")); // NOI18N
 
-        descriptionLabel.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.descriptionLabel.text")); // NOI18N
+        descriptionLabel.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.descriptionLabel.text")); // NOI18N
         descriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         descriptionLabel.setLineWrap(true);
-        descriptionLabel.setMinimumSize(new java.awt.Dimension(0, 0));
-        descriptionLabel.setPreferredSize(new java.awt.Dimension(0, 0));
 
-        header.setDescription(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.description")); // NOI18N
+        header.setDescription(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "GraphDistancePanel.description")); // NOI18N
         header.setMinimumSize(new java.awt.Dimension(119, 39));
         header.setName(""); // NOI18N
-        header.setOpaque(false);
         header.setPreferredSize(new java.awt.Dimension(1184, 50));
-        header.setTitle(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.title")); // NOI18N
+        header.setTitle(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "GraphDistancePanel.title")); // NOI18N
 
-        jXLabel1.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.jXLabel1.text")); // NOI18N
+        jXLabel1.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.jXLabel1.text")); // NOI18N
         jXLabel1.setLineWrap(true);
 
-        jXLabel2.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.jXLabel2.text")); // NOI18N
+        jXLabel2.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.jXLabel2.text")); // NOI18N
         jXLabel2.setLineWrap(true);
 
-        jXLabel3.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.jXLabel3.text")); // NOI18N
+        jXLabel3.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.jXLabel3.text")); // NOI18N
         jXLabel3.setLineWrap(true);
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.jLabel1.text")); // NOI18N
+        jLabel1.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.jLabel1.text")); // NOI18N
 
         jLabel2.setFont(jLabel2.getFont().deriveFont(jLabel2.getFont().getStyle() | java.awt.Font.BOLD));
-        jLabel2.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.jLabel2.text")); // NOI18N
+        jLabel2.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.jLabel2.text")); // NOI18N
 
         jLabel3.setFont(jLabel3.getFont().deriveFont(jLabel3.getFont().getStyle() | java.awt.Font.BOLD));
-        jLabel3.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.jLabel3.text")); // NOI18N
+        jLabel3.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.jLabel3.text")); // NOI18N
         jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
-        normalizeButton.setText(org.openide.util.NbBundle.getMessage(GraphDistancePanel.class, "GraphDistancePanel.normalizeButton.text")); // NOI18N
+        normalizeButton.setText(org.openide.util.NbBundle.getMessage(LogicDistancePanel.class, "LogicDistancePanel.normalizeButton.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

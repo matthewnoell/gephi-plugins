@@ -14,43 +14,43 @@ public class DiameterUI implements StatisticsUI {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
-    private GraphDistancePanel panel;
-    private GraphDistance graphDistance;
+    private LogicDistancePanel panel;
+    private LogicDistance logicDistance;
 
     @Override
     public JPanel getSettingsPanel() {
-        panel = new GraphDistancePanel();
+        panel = new LogicDistancePanel();
         return panel;
     }
 
     @Override
     public void setup(Statistics statistics) {
-        this.graphDistance = (GraphDistance) statistics;
+        this.logicDistance = (LogicDistance) statistics;
         if (panel != null) {
-            panel.setDirected(graphDistance.isDirected());
-            panel.doNormalize(graphDistance.isNormalized());
+            panel.setDirected(logicDistance.isDirected());
+            panel.doNormalize(logicDistance.isNormalized());
         }
     }
 
     @Override
     public void unsetup() {
         if (panel != null) {
-            graphDistance.setDirected(panel.isDirected());
-            graphDistance.setNormalized(panel.normalize());
+            logicDistance.setDirected(panel.isDirected());
+            logicDistance.setNormalized(panel.normalize());
         }
         panel = null;
-        graphDistance = null;
+        logicDistance = null;
     }
 
     @Override
     public Class<? extends Statistics> getStatisticsClass() {
-        return GraphDistance.class;
+        return LogicDistance.class;
     }
 
     @Override
     public String getValue() {
         DecimalFormat df = new DecimalFormat("###.###");
-        return "" + df.format(graphDistance.getDiameter());
+        return "" + df.format(logicDistance.getDiameter());
     }
 
     @Override

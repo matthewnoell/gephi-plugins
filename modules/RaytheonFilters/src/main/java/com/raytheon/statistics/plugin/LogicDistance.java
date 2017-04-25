@@ -38,7 +38,7 @@ import org.jfree.ui.VerticalAlignment;
  *
  * @author Matthew Noell <mnoell@raytheon.com>
  */
-public class GraphDistance implements Statistics, LongTask {
+public class LogicDistance implements Statistics, LongTask {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
     
@@ -113,9 +113,9 @@ public class GraphDistance implements Statistics, LongTask {
     }
 
     /**
-     * Construct a GraphDistance calculator for the current graph model
+     * Construct a LogicDistance calculator for the current graph model
      */
-    public GraphDistance() {
+    public LogicDistance() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
         if (graphController != null && graphController.getGraphModel() != null) {
             isDirected = graphController.getGraphModel().isDirected();
