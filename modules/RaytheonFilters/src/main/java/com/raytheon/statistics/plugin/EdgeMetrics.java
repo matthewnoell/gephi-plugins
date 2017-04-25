@@ -232,6 +232,22 @@ public class EdgeMetrics implements Statistics, LongTask {
         }
     }
 
+    public void setNormalized(boolean isNormalized) {
+        this.isNormalized = isNormalized;
+    }
+
+    public boolean isNormalized() {
+        return isNormalized;
+    }
+    
+    public void setDirected(boolean isDirected) {
+        this.isDirected = isDirected;
+    }
+    
+    public boolean isDirected() {
+        return isDirected;
+    }
+    
     /**
      *
      * @return
