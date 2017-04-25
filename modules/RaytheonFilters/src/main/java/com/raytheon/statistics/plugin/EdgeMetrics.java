@@ -227,6 +227,8 @@ public class EdgeMetrics implements Statistics, LongTask {
     private void initializeAttributeColumns(GraphModel graphModel) {
         LOG.log(Level.INFO, "EdgeMetric.initializeAttributeColumns()");
         Table edgeTable = graphModel.getEdgeTable();
+        String x = NbBundle.getMessage(EdgeMetrics.class, "EdgeMetrics.edgecolumn.Length");
+        LOG.log(Level.INFO, "EdgeMetric.initializeAttributeColumns(): col name = {0}", x);
         if (!edgeTable.hasColumn(EDGE_LENGTH)) {
             edgeTable.addColumn(EDGE_LENGTH, NbBundle.getMessage(EdgeMetrics.class, "EdgeMetrics.edgecolumn.Length"), Double.class, new Double(0));
         }
