@@ -14,18 +14,18 @@ public class DiameterUI implements StatisticsUI {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
-    private LogicDistancePanel panel;
-    private LogicDistance logicDistance;
+    private LogicCentralityPanel panel;
+    private LogicCentrality logicDistance;
 
     @Override
     public JPanel getSettingsPanel() {
-        panel = new LogicDistancePanel();
+        panel = new LogicCentralityPanel();
         return panel;
     }
 
     @Override
     public void setup(Statistics statistics) {
-        this.logicDistance = (LogicDistance) statistics;
+        this.logicDistance = (LogicCentrality) statistics;
         if (panel != null) {
             panel.setDirected(logicDistance.isDirected());
             panel.doNormalize(logicDistance.isNormalized());
@@ -44,7 +44,7 @@ public class DiameterUI implements StatisticsUI {
 
     @Override
     public Class<? extends Statistics> getStatisticsClass() {
-        return LogicDistance.class;
+        return LogicCentrality.class;
     }
 
     @Override

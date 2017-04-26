@@ -12,22 +12,22 @@ import java.util.logging.Logger;
  * @author Matthew Noell <mnoell@raytheon.com>
  */
 @ServiceProvider(service=StatisticsBuilder.class)
-public class LogicDistanceBuilder implements StatisticsBuilder {
+public class LogicCentralityBuilder implements StatisticsBuilder {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
 
     @Override
     public String getName() {
-        return NbBundle.getMessage(LogicDistanceBuilder.class, "LogicDistance.name");
+        return NbBundle.getMessage(LogicCentralityBuilder.class, "LogicCentrality.name");
     }
 
     @Override
     public Statistics getStatistics() {
-        return new LogicDistance();
+        return new LogicCentrality();
     }
 
     @Override
     public Class<? extends Statistics> getStatisticsClass() {
-        return LogicDistance.class;
+        return LogicCentrality.class;
     }
 }

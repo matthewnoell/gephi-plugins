@@ -38,7 +38,7 @@ import org.jfree.ui.VerticalAlignment;
  *
  * @author Matthew Noell <mnoell@raytheon.com>
  */
-public class LogicDistance implements Statistics, LongTask {
+public class LogicCentrality implements Statistics, LongTask {
     
     private static final Logger LOG = Logger.getLogger("com.raytheon.statistics.plugin");
     
@@ -67,6 +67,7 @@ public class LogicDistance implements Statistics, LongTask {
      */
     private int diameter;
     private int radius;
+    private double maxBetweenness;
     /**
      *
      */
@@ -113,9 +114,15 @@ public class LogicDistance implements Statistics, LongTask {
     }
 
     /**
-     * Construct a LogicDistance calculator for the current graph model
+     * @return the maxBetweenness of the network
      */
-    public LogicDistance() {
+    public double getMaxBetweenness() {
+        return maxBetweenness;
+    }
+    /**
+     * Construct a LogicCentrality calculator for the current graph model
+     */
+    public LogicCentrality() {
         GraphController graphController = Lookup.getDefault().lookup(GraphController.class);
         if (graphController != null && graphController.getGraphModel() != null) {
             isDirected = graphController.getGraphModel().isDirected();
@@ -162,13 +169,17 @@ public class LogicDistance implements Statistics, LongTask {
 
             HashMap<Node, Integer> indicies = createIndiciesMap(graph);
 
-            Map<String, double[]> metrics = calculateDistanceMetrics(graph, indicies, isDirected, isNormalized);
+            Map<String, double[]> metrics = calculateCentralityMetrics(graph, indicies, isDirected, isNormalized);
 
             eccentricity = metrics.get(ECCENTRICITY);
             closeness = metrics.get(CLOSENESS);
             harmonicCloseness = metrics.get(HARMONIC_CLOSENESS);
             betweenness = metrics.get(BETWEENNESS);
 
+            Node s = getMostCentralNode(graph, indicies, betweenness);
+            int s_index = indicies.get(s);
+            maxBetweenness = betweenness[s_index];
+            
             saveCalculatedValues(graph, indicies, eccentricity, betweenness, closeness, harmonicCloseness);
         } finally {
             graph.readUnlock();
@@ -176,7 +187,7 @@ public class LogicDistance implements Statistics, LongTask {
 
     }
 
-    public Map<String, double[]> calculateDistanceMetrics(Graph graph, HashMap<Node, Integer> indicies, boolean directed, boolean normalized) {
+    public Map<String, double[]> calculateCentralityMetrics(Graph graph, HashMap<Node, Integer> indicies, boolean directed, boolean normalized) {
         int n = graph.getNodeCount();
 
         HashMap<String, double[]> metrics = new HashMap<>();
@@ -338,6 +349,7 @@ public class LogicDistance implements Statistics, LongTask {
         eccentricity = new double[N];
         closeness = new double[N];
         harmonicCloseness = new double[N];
+        maxBetweenness = 0.0;
         diameter = 0;
         avgDist = 0;
         radius = Integer.MAX_VALUE;
@@ -359,6 +371,22 @@ public class LogicDistance implements Statistics, LongTask {
                 nodeBetweenness[s_index] /= directed ? (n - 1) * (n - 2) : (n - 1) * (n - 2) / 2;
             }
         }
+    }
+    
+    private Node getMostCentralNode(Graph graph, HashMap<Node, Integer> indicies, double[] nodeBetweenness) {
+        Node n = null;
+        double maxBetweenness = 0.0;
+
+        for (Node s : graph.getNodes()) {
+            int s_index = indicies.get(s);
+
+            if (nodeBetweenness[s_index] > maxBetweenness) {
+                maxBetweenness = nodeBetweenness[s_index];
+                n = s;
+            }
+        }
+        
+        return n;
     }
 
     private void saveCalculatedValues(Graph graph, HashMap<Node, Integer> indicies,
@@ -451,7 +479,7 @@ public class LogicDistance implements Statistics, LongTask {
             Exceptions.printStackTrace(ex);
         }
 
-        String report = "<HTML> <BODY> <h1>Graph Distance  Report </h1> "
+        String report = "<HTML> <BODY> <h1>Graph Centrality  Report </h1> "
                 + "<hr>"
                 + "<br>"
                 + "<h2> Parameters: </h2>"
